@@ -24,10 +24,10 @@
         ++ [
           (import ../modules/firefox.nix part-inputs)
           (import ../modules/ghostty.nix part-inputs)
+          ../modules/cursor.nix
           ../modules/discord.nix
           ../modules/spotify.nix
           ../modules/vintagestory.nix
-          ../modules/vscode.nix
         ];
       pkgs = pkgsLinux;
     };
