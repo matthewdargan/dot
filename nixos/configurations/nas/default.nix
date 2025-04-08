@@ -1,4 +1,8 @@
-{nixpkgs, ...}: {
+{
+  media-server,
+  nixpkgs,
+  ...
+}: {
   config,
   pkgs,
   ...
@@ -66,6 +70,26 @@
     tailscale.enable = true;
   };
   system.stateVersion = "24.11";
+  systemd = {
+    services.moochrss = {
+      description = "Queries RSS feeds and downloads torrents automatically";
+      requires = ["local-fs.target" "network-online.target"];
+      serviceConfig = {
+        ExecStart = "${media-server.packages.${pkgs.system}.moochrss}/bin/moochrss";
+        Type = "oneshot";
+        User = "jellyfin";
+      };
+    };
+    timers.moochrss = {
+      description = "moochrss.timer";
+      timerConfig = {
+        OnCalendar = "daily";
+        Persistent = "true";
+        Unit = "moochrss.service";
+      };
+      wantedBy = ["timers.target"];
+    };
+  };
   time.timeZone = "America/Chicago";
   users.users.mpd = {
     description = "Matthew Dargan";
