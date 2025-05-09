@@ -1,3 +1,3 @@
 {
-  imports = [./neovim];
+  imports = [./installers ./neovim];
 }
