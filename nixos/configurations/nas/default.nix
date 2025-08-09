@@ -107,8 +107,15 @@
   system.stateVersion = "25.05";
   systemd = {
     services = {
+      jellyfin = {
+        after = ["nas-mount.service"];
+        wants = ["nas-mount.service"];
+      };
       "nas-mount" = {
-        after = ["network.target"];
+        after = [
+          "network-online.target"
+          "u9fs.socket"
+        ];
         description = "mount nas";
         serviceConfig = {
           ExecStart = [
@@ -123,10 +130,16 @@
             "/run/wrappers/bin/9umount /home/media/n/nas /home/media/n/movies /home/media/n/shows"
           ];
           RemainAfterExit = true;
+          Restart = "on-failure";
+          RestartSec = "5s";
           Type = "oneshot";
           User = "media";
         };
         wantedBy = ["multi-user.target"];
+        wants = [
+          "network-online.target"
+          "u9fs.socket"
+        ];
       };
       "u9fs@" = {
         after = ["network.target"];

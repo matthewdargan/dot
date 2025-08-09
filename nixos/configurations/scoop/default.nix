@@ -95,7 +95,10 @@
   };
   system.stateVersion = "25.05";
   systemd.services."nas-mount" = {
-    after = ["network.target"];
+    after = [
+      "network-online.target"
+      "u9fs.socket"
+    ];
     description = "mount nas";
     serviceConfig = {
       ExecStart = [
@@ -108,9 +111,15 @@
       ];
       ExecStop = ["/run/wrappers/bin/9umount /home/mpd/n/nas /home/mpd/n/movies /home/mpd/n/shows"];
       RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
       Type = "oneshot";
     };
     wantedBy = ["multi-user.target"];
+    wants = [
+      "network-online.target"
+      "u9fs.socket"
+    ];
   };
   time.timeZone = "America/Chicago";
   users.users.mpd = {
